@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<h1>Submit code</h1>
+
+<div id="cont">
+<label for="fname">Enter the code from the message:</label><br>
+<input type="text" id="fname" name="code" value=""><br>
+<input id="button" type="submit" value="Submit">
+<br>
+</div>
+
+<script>
+    var parentWindow = window.parent;
+    var data = ""
+    document.getElementById("button").addEventListener("click", (e) => {
+        var code = document.getElementById("fname").value;
+        //console.log("RECEIVED message from PARENT TO CHILD", data);
+
+        fetch('/login/code-verification', {
+        method: 'POST',
+        headers: {
+            'Accept' : 'application/json. text/plain, */*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(code)
+        }).then(response => {
+            if (response.status == 403){
+                window.location.replace("/login/invalid-token");
+            }
+            else if (response.status == 200){
+                var token = document.createElement("label");
+                response.text().then(body => {
+                    const textnode = document.createTextNode(body);
+                    token.appendChild(textnode);
+                    document.getElementById("cont").appendChild(token)
+                })
+            }
+        });
+    })
+
+
+
+</script>
+
+
+</html>

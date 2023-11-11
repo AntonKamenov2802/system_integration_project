@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<h1>My Log-in page</h1>
+
+<iframe style="height: 550px" id="MitID" src="https://mitid.eu.pythonanywhere.com/" title="Log-in with Mit-ID"></iframe>
+
+
+<script>
+    var parentWindow = window.parent;
+    var data = ""
+    window.addEventListener("message", (e) => {
+        var token = e.data;
+        //console.log("RECEIVED message from PARENT TO CHILD", data);
+
+        fetch('/login/validate-token', {
+        method: 'POST',
+        headers: {
+            'Accept' : 'application/json. text/plain, */*',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(token)
+        }).then(response => {
+            if (response.status == 403){
+                window.location.replace("/login/invalid-token")
+            }
+            if (response.status == 200){
+                window.location.replace("/login/code-verification")
+            }
+        });
+    })
+
+
+
+</script>
+
+</html>
